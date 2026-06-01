@@ -22,7 +22,7 @@ public class DisplayPanel extends JPanel implements MouseListener, KeyListener {
     public DisplayPanel() {
         score = 0;
         yellowColor = true;
-        marioX = 50;
+        marioX = 230;
         marioY = 435;
         try {
             background = ImageIO.read(new File("src/PizzaBox.jpg"));
@@ -30,7 +30,7 @@ public class DisplayPanel extends JPanel implements MouseListener, KeyListener {
             System.out.println(e.getMessage());
         }
         try {
-            mario = ImageIO.read(new File("src/Slice.png"));
+            mario = ImageIO.read(new File("src/ABC.png"));
         } catch (IOException e) {
             System.out.println(e.getMessage());
         }
@@ -88,7 +88,7 @@ public class DisplayPanel extends JPanel implements MouseListener, KeyListener {
             if(marioX > 0)
                 marioX -= 10;
             try {
-                mario = ImageIO.read(new File("src/Slice.png"));
+                mario = ImageIO.read(new File("src/ABC.png"));
             } catch (IOException error) { }
             repaint();
         }
@@ -101,7 +101,7 @@ public class DisplayPanel extends JPanel implements MouseListener, KeyListener {
             if(marioX < 920)
                 marioX += 10;
             try {
-                mario = ImageIO.read(new File("src/Slice.png"));
+                mario = ImageIO.read(new File("src/ABC.png"));
             } catch (IOException error) { }
             repaint();
         }
