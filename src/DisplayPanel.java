@@ -10,20 +10,32 @@ import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 public class DisplayPanel extends JPanel implements MouseListener, KeyListener {
     private int score;
     private boolean yellowColor;
     private int marioX;
     private int marioY;
+    private int ratX;
+    private int ratY;
     private BufferedImage background;
     private BufferedImage mario;
+    private BufferedImage pizza;
+    private BufferedImage rat;
+    private BufferedImage basil;
+
+
 
     public DisplayPanel() {
         score = 0;
         yellowColor = true;
         marioX = 230;
         marioY = 435;
+        ratX=50;
+        ratY=0;
         try {
             background = ImageIO.read(new File("src/PizzaBox.jpg"));
         } catch (IOException e) {
@@ -31,6 +43,21 @@ public class DisplayPanel extends JPanel implements MouseListener, KeyListener {
         }
         try {
             mario = ImageIO.read(new File("src/ABC.png"));
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+        }
+        try {
+            pizza = ImageIO.read(new File("src/PieFinal.png"));
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+        }
+        try {
+            rat = ImageIO.read(new File("src/Rat.png"));
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+        }
+        try {
+            basil = ImageIO.read(new File("src/Basil.png"));
         } catch (IOException e) {
             System.out.println(e.getMessage());
         }
@@ -45,6 +72,8 @@ public class DisplayPanel extends JPanel implements MouseListener, KeyListener {
         super.paintComponent(g);
         g.drawImage(background, 0, 0, null);
         g.drawImage(mario, marioX, marioY, null);
+        g.drawImage(pizza, 150,200,null);
+        g.drawImage(rat, ratX, ratY, null);
 
         // set font and color of text
         g.setFont(new Font("Arial", Font.BOLD, 16));
