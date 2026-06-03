@@ -1,12 +1,10 @@
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
+import javax.swing.Timer;
 import java.awt.Graphics;
 import java.awt.Font;
 import java.awt.Color;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
+import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -14,7 +12,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-public class DisplayPanel extends JPanel implements MouseListener, KeyListener {
+public class DisplayPanel extends JPanel implements MouseListener, KeyListener, ActionListener {
     private int score;
     private boolean yellowColor;
     private int marioX;
@@ -26,6 +24,7 @@ public class DisplayPanel extends JPanel implements MouseListener, KeyListener {
     private BufferedImage pizza;
     private BufferedImage rat;
     private BufferedImage basil;
+    private Timer t;
 
 
 
@@ -65,6 +64,9 @@ public class DisplayPanel extends JPanel implements MouseListener, KeyListener {
         addKeyListener(this);
         setFocusable(true); // this line of code + one below makes this panel active for keylistener events
         requestFocusInWindow(); // see comment above
+        while(true){
+            moveRat(t);
+        }
     }
 
     @Override
@@ -99,6 +101,15 @@ public class DisplayPanel extends JPanel implements MouseListener, KeyListener {
             yellowColor = !yellowColor;
             repaint();
         }
+    }
+
+    public void moveRat(MouseEvent e){
+        ratY -= 3;
+        if(ratY > 540){
+            ratY = 0;
+            ratX = (int) (Math.random() *540);
+        }
+        repaint();
     }
 
     @Override
@@ -139,4 +150,9 @@ public class DisplayPanel extends JPanel implements MouseListener, KeyListener {
 
     @Override
     public void keyReleased(KeyEvent e) { }  // unimplemented
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+
+    }
 }

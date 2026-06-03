@@ -15,5 +15,6 @@ public class Main {
 
         // call setVisible after everything else
         frame.setVisible(true);
+
     }
 }
