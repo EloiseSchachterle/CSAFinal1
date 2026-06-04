@@ -13,35 +13,38 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 public class DisplayPanel extends JPanel implements MouseListener, KeyListener, ActionListener {
-    private int score;
+    private double time;
     private boolean yellowColor;
-    private int marioX;
-    private int marioY;
+    private int sliceX;
+    private int sliceY;
     private int ratX;
     private int ratY;
     private BufferedImage background;
-    private BufferedImage mario;
     private BufferedImage pizza;
+    private BufferedImage slice;
     private BufferedImage rat;
     private BufferedImage basil;
     private Timer t;
+    private int speed;
 
 
 
     public DisplayPanel() {
-        score = 0;
+        time = 0;
         yellowColor = true;
-        marioX = 230;
-        marioY = 435;
+        sliceX = 230;
+        sliceY = 435;
         ratX=50;
         ratY=0;
+        speed = 2;
+        t = new Timer(10, this);
         try {
             background = ImageIO.read(new File("src/PizzaBox.jpg"));
         } catch (IOException e) {
             System.out.println(e.getMessage());
         }
         try {
-            mario = ImageIO.read(new File("src/ABC.png"));
+            slice = ImageIO.read(new File("src/ABC.png"));
         } catch (IOException e) {
             System.out.println(e.getMessage());
         }
@@ -64,27 +67,28 @@ public class DisplayPanel extends JPanel implements MouseListener, KeyListener, 
         addKeyListener(this);
         setFocusable(true); // this line of code + one below makes this panel active for keylistener events
         requestFocusInWindow(); // see comment above
-        while(true){
-            moveRat(t);
-        }
+        t.start();
     }
 
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
         g.drawImage(background, 0, 0, null);
-        g.drawImage(mario, marioX, marioY, null);
+        g.drawImage(slice, sliceX, sliceY, null);
         g.drawImage(pizza, 150,200,null);
         g.drawImage(rat, ratX, ratY, null);
 
         // set font and color of text
         g.setFont(new Font("Arial", Font.BOLD, 16));
         if (yellowColor) {
-            g.setColor(Color.YELLOW);
+            g.setColor(Color.BLACK);
         } else {
             g.setColor(Color.BLACK);
         }
-        g.drawString("Score: " + score, 50, 30);
+        g.drawString("Time: " + ((int) (time)), 10, 30);
+        if(time < 6){
+            g.drawString("DONT LET ANY RATS STEAL YOUR PIZZA! " , 100, 30);
+        }
     }
 
     @Override
@@ -125,10 +129,10 @@ public class DisplayPanel extends JPanel implements MouseListener, KeyListener, 
     public void keyPressed(KeyEvent e) {
         int keyCode = e.getKeyCode();
         if (keyCode == KeyEvent.VK_A) {  // A key; VK_A equals 65
-            if(marioX > 0)
-                marioX -= 10;
+            if(sliceX > 0)
+               sliceX -= 20;
             try {
-                mario = ImageIO.read(new File("src/ABC.png"));
+                slice = ImageIO.read(new File("src/ABC.png"));
             } catch (IOException error) { }
             repaint();
         }
@@ -138,13 +142,21 @@ public class DisplayPanel extends JPanel implements MouseListener, KeyListener, 
 
 
         if (keyCode == KeyEvent.VK_D) {  // D key; VK_D equals 65
-            if(marioX < 920)
-                marioX += 10;
+            if(sliceX < 480)
+                sliceX += 20;
             try {
-                mario = ImageIO.read(new File("src/ABC.png"));
+                slice = ImageIO.read(new File("src/ABC.png"));
             } catch (IOException error) { }
             repaint();
         }
+    }
+    public void moveRat(){
+        ratY += speed;
+        if(ratY >= 540){
+            ratY=0;
+            ratX = (int) (Math.random() * 460) + 40;
+        }
+        repaint();
     }
 
 
@@ -153,6 +165,8 @@ public class DisplayPanel extends JPanel implements MouseListener, KeyListener, 
 
     @Override
     public void actionPerformed(ActionEvent e) {
-
+        moveRat();
+        time+= 0.02/1.5;
+        speed = (int) (time/20 + 1.0);
     }
 }
