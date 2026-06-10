@@ -1,20 +1,15 @@
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 import javax.swing.Timer;
-import java.awt.Graphics;
-import java.awt.Font;
-import java.awt.Color;
+import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
+
 
 public class DisplayPanel extends JPanel implements MouseListener, KeyListener, ActionListener {
     private double time;
-    private boolean yellowColor;
     private int sliceX;
     private int sliceY;
     private int ratX;
@@ -24,20 +19,36 @@ public class DisplayPanel extends JPanel implements MouseListener, KeyListener, 
     private BufferedImage slice;
     private BufferedImage rat;
     private BufferedImage basil;
+    private BufferedImage won;
+    private BufferedImage lostPhoto;
     private Timer t;
     private int speed;
+    private boolean lost;
 
 
 
     public DisplayPanel() {
+        lost = false;
         time = 0;
-        yellowColor = true;
         sliceX = 230;
         sliceY = 435;
-        ratX=50;
+        ratX=235;
         ratY=0;
         speed = 2;
         t = new Timer(10, this);
+
+            try {
+                won = ImageIO.read(new File("src/WinGame.png"));
+            } catch (IOException e) {
+                System.out.println(e.getMessage());
+            }
+
+        try {
+            lostPhoto = ImageIO.read(new File("src/RatWon.png"));
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+        }
+
         try {
             background = ImageIO.read(new File("src/PizzaBox.jpg"));
         } catch (IOException e) {
@@ -65,8 +76,8 @@ public class DisplayPanel extends JPanel implements MouseListener, KeyListener, 
         }
         addMouseListener(this);
         addKeyListener(this);
-        setFocusable(true); // this line of code + one below makes this panel active for keylistener events
-        requestFocusInWindow(); // see comment above
+        setFocusable(true);
+        requestFocusInWindow();
         t.start();
     }
 
@@ -77,58 +88,56 @@ public class DisplayPanel extends JPanel implements MouseListener, KeyListener, 
         g.drawImage(slice, sliceX, sliceY, null);
         g.drawImage(pizza, 150,200,null);
         g.drawImage(rat, ratX, ratY, null);
+        if(time > 60)
+            g.drawImage(won, 0,0, null);
 
-        // set font and color of text
+
         g.setFont(new Font("Arial", Font.BOLD, 16));
-        if (yellowColor) {
-            g.setColor(Color.BLACK);
-        } else {
-            g.setColor(Color.BLACK);
-        }
+        g.setColor(Color.BLACK);
+
         g.drawString("Time: " + ((int) (time)), 10, 30);
         if(time < 6){
             g.drawString("DONT LET ANY RATS STEAL YOUR PIZZA! " , 100, 30);
         }
+        if(time > 60){
+            g.setFont(new Font("Arial", Font.BOLD, 50));
+            g.drawString("YOU WIN!!! " , 125, 250);
+
+        }
+        if(lost){
+            g.setFont(new Font("Arial", Font.BOLD, 50));
+            g.drawImage(lostPhoto, 0, 0, null);
+            g.drawString("YOU LOOSE!!", 125, 250);
+            t.stop();
+        }
+
     }
 
     @Override
-    public void mouseClicked(MouseEvent e) { } // unimplemented
-    // unimplemented because if you move your mouse while clicking, this method isn't
-    // called, so mouseReleased is best
+    public void mouseClicked(MouseEvent e) { }
+
 
     @Override
-    public void mousePressed(MouseEvent e) { } // unimplemented
+    public void mousePressed(MouseEvent e) { }
 
     @Override
     public void mouseReleased(MouseEvent e) {
-        if (e.getButton() == MouseEvent.BUTTON3) {
-            yellowColor = !yellowColor;
-            repaint();
-        }
-    }
 
-    public void moveRat(MouseEvent e){
-        ratY -= 3;
-        if(ratY > 540){
-            ratY = 0;
-            ratX = (int) (Math.random() *540);
-        }
-        repaint();
     }
 
     @Override
-    public void mouseEntered(MouseEvent e) { } // unimplemented
+    public void mouseEntered(MouseEvent e) { }
 
     @Override
-    public void mouseExited(MouseEvent e) { } // unimplemented
+    public void mouseExited(MouseEvent e) { }
 
     @Override
-    public void keyTyped(KeyEvent e) { } // unimplemented
+    public void keyTyped(KeyEvent e) { }
 
     @Override
     public void keyPressed(KeyEvent e) {
         int keyCode = e.getKeyCode();
-        if (keyCode == KeyEvent.VK_A) {  // A key; VK_A equals 65
+        if (keyCode == KeyEvent.VK_A) {
             if(sliceX > 0)
                sliceX -= 20;
             try {
@@ -141,7 +150,7 @@ public class DisplayPanel extends JPanel implements MouseListener, KeyListener, 
 
 
 
-        if (keyCode == KeyEvent.VK_D) {  // D key; VK_D equals 65
+        if (keyCode == KeyEvent.VK_D) {
             if(sliceX < 480)
                 sliceX += 20;
             try {
@@ -152,13 +161,22 @@ public class DisplayPanel extends JPanel implements MouseListener, KeyListener, 
     }
     public void moveRat(){
         ratY += speed;
-        if(ratY >= 540){
-            ratY=0;
-            ratX = (int) (Math.random() * 460) + 40;
-        }
+
         repaint();
     }
+    private Rectangle sliceRectangle() {
+        int imageHeight = slice.getHeight();
+        int imageWidth = slice.getWidth();
+        Rectangle rect = new Rectangle(sliceX, sliceY, imageWidth, imageHeight);
+        return rect;
+    }
 
+    private Rectangle ratRectangle() {
+        int imageHeight = rat.getHeight();
+        int imageWidth = rat.getWidth();
+        Rectangle rect = new Rectangle(ratX, ratY, imageWidth, imageHeight);
+        return rect;
+    }
 
     @Override
     public void keyReleased(KeyEvent e) { }  // unimplemented
@@ -168,5 +186,13 @@ public class DisplayPanel extends JPanel implements MouseListener, KeyListener, 
         moveRat();
         time+= 0.02/1.5;
         speed = (int) (time/20 + 1.0);
+        if(sliceRectangle().intersects(ratRectangle())){
+            ratY = -30;
+            ratX = (int) (Math.random() * 460) + 40;
+        }
+        if (ratY > 540)
+            lost = true;
+
     }
+
 }
