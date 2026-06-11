@@ -37,11 +37,11 @@ public class DisplayPanel extends JPanel implements MouseListener, KeyListener, 
         speed = 2;
         t = new Timer(10, this);
 
-            try {
-                won = ImageIO.read(new File("src/WinGame.png"));
-            } catch (IOException e) {
-                System.out.println(e.getMessage());
-            }
+        try {
+            won = ImageIO.read(new File("src/FinalPizzaWon.png"));
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+        }
 
         try {
             lostPhoto = ImageIO.read(new File("src/RatWon.png"));
@@ -84,12 +84,13 @@ public class DisplayPanel extends JPanel implements MouseListener, KeyListener, 
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
-        g.drawImage(background, 0, 0, null);
-        g.drawImage(slice, sliceX, sliceY, null);
-        g.drawImage(pizza, 150,200,null);
-        g.drawImage(rat, ratX, ratY, null);
-        if(time > 60)
-            g.drawImage(won, 0,0, null);
+        if(time <= 60) {
+            g.drawImage(background, 0, 0, null);
+            g.drawImage(slice, sliceX, sliceY, null);
+            g.drawImage(pizza, 150, 200, null);
+            g.drawImage(rat, ratX, ratY, null);
+        }
+        else g.drawImage(won, 0,0, null);
 
 
         g.setFont(new Font("Arial", Font.BOLD, 16));
@@ -139,7 +140,7 @@ public class DisplayPanel extends JPanel implements MouseListener, KeyListener, 
         int keyCode = e.getKeyCode();
         if (keyCode == KeyEvent.VK_A) {
             if(sliceX > 0)
-               sliceX -= 20;
+                sliceX -= 20;
             try {
                 slice = ImageIO.read(new File("src/ABC.png"));
             } catch (IOException error) { }
@@ -192,6 +193,8 @@ public class DisplayPanel extends JPanel implements MouseListener, KeyListener, 
         }
         if (ratY > 540)
             lost = true;
+        if(time > 60)
+            t.stop();
 
     }
 
