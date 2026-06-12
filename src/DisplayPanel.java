@@ -27,6 +27,7 @@ public class DisplayPanel extends JPanel implements MouseListener, KeyListener, 
     private BufferedImage lostPhoto;
     private BufferedImage boom;
     private BufferedImage reset;
+    private BufferedImage finishLine;
     private Timer t = new Timer(10, this);
     private int speed = 2;
     private boolean lost = false;
@@ -51,6 +52,12 @@ public class DisplayPanel extends JPanel implements MouseListener, KeyListener, 
 
         try {
             reset = ImageIO.read(new File("src/ResetButton.png"));
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+        }
+
+        try {
+            finishLine = ImageIO.read(new File("src/redFinishLine2.jpg"));
         } catch (IOException e) {
             System.out.println(e.getMessage());
         }
@@ -125,9 +132,9 @@ public class DisplayPanel extends JPanel implements MouseListener, KeyListener, 
         super.paintComponent(g);
         if(time <= 60) {
             g.drawImage(background, 0, 0, null);
-            g.drawImage(slice, sliceX, sliceY, null);
-            g.drawImage(pizza, 125, 125, null);
-            g.drawImage(rat, ratX, ratY, null);
+
+
+
             for(Pepperoni p : pepperonis){
                 g.drawImage(pepperoniImage, p.getX(), p.getY(), null);
             }
@@ -143,6 +150,10 @@ public class DisplayPanel extends JPanel implements MouseListener, KeyListener, 
             for(Mushroom p : mushrooms){
                 g.drawImage(mushroom1, p.getX(), p.getY(), null);
             }
+            g.drawImage(pizza, 125, 125, null);
+            g.drawImage(finishLine, 0, 460, null);
+            g.drawImage(slice, sliceX, sliceY, null);
+            g.drawImage(rat, ratX, ratY, null);
         }
         else{
             g.drawImage(won, 0,0, null);
@@ -326,3 +337,4 @@ public class DisplayPanel extends JPanel implements MouseListener, KeyListener, 
     }
 
 }
+
