@@ -6,7 +6,8 @@ import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-
+import java.awt.MouseInfo;
+import java.awt.Point;
 
 public class DisplayPanel extends JPanel implements MouseListener, KeyListener, ActionListener {
     private double time;
@@ -21,9 +22,16 @@ public class DisplayPanel extends JPanel implements MouseListener, KeyListener, 
     private BufferedImage basil;
     private BufferedImage won;
     private BufferedImage lostPhoto;
+    private BufferedImage boom;
+    private BufferedImage reset;
     private Timer t;
     private int speed;
     private boolean lost;
+    private boolean showBoom;
+    private int boomX;
+    private int boomY;
+    private double boomEndTime;
+
 
 
 
@@ -39,6 +47,18 @@ public class DisplayPanel extends JPanel implements MouseListener, KeyListener, 
 
         try {
             won = ImageIO.read(new File("src/FinalPizzaWon.png"));
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+        }
+
+        try {
+            reset = ImageIO.read(new File("src/ResetButton.png"));
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+        }
+
+        try {
+            boom = ImageIO.read(new File("src/boom.png"));
         } catch (IOException e) {
             System.out.println(e.getMessage());
         }
@@ -90,7 +110,10 @@ public class DisplayPanel extends JPanel implements MouseListener, KeyListener, 
             g.drawImage(pizza, 150, 200, null);
             g.drawImage(rat, ratX, ratY, null);
         }
-        else g.drawImage(won, 0,0, null);
+        else{
+            g.drawImage(won, 0,0, null);
+            g.drawImage(reset, 400,400, null);
+        }
 
 
         g.setFont(new Font("Arial", Font.BOLD, 16));
@@ -109,8 +132,12 @@ public class DisplayPanel extends JPanel implements MouseListener, KeyListener, 
             g.setFont(new Font("Arial", Font.BOLD, 50));
             g.drawImage(lostPhoto, 0, 0, null);
             g.drawString("YOU LOOSE!!", 125, 250);
+            g.drawImage(reset, 400,400, null);
             t.stop();
         }
+        if(showBoom && !lost && time <= 60)
+            g.drawImage(boom, boomX, boomY, null);
+
 
     }
 
@@ -123,9 +150,21 @@ public class DisplayPanel extends JPanel implements MouseListener, KeyListener, 
 
     @Override
     public void mouseReleased(MouseEvent e) {
+        int mouseX = e.getX();
+        int mouseY = e.getY();
+        if((mouseX > 400 && mouseX < 550) &&
+                (mouseY > 400 && mouseY < 550) &&
+                (lost || time > 60)){
+            time = 0;
+            lost = false;
+            sliceX = 230;
+            ratX=235;
+            ratY=0;
+            speed = 2;
+            t.start();
+        }
 
     }
-
     @Override
     public void mouseEntered(MouseEvent e) { }
 
@@ -179,6 +218,8 @@ public class DisplayPanel extends JPanel implements MouseListener, KeyListener, 
         return rect;
     }
 
+
+
     @Override
     public void keyReleased(KeyEvent e) { }  // unimplemented
 
@@ -188,13 +229,22 @@ public class DisplayPanel extends JPanel implements MouseListener, KeyListener, 
         time+= 0.02/1.5;
         speed = (int) (time/20 + 1.0);
         if(sliceRectangle().intersects(ratRectangle())){
+            showBoom = true;
+            boomX = ratX;
+            boomY = ratY;
+            boomEndTime = time + 1;
             ratY = -30;
             ratX = (int) (Math.random() * 460) + 40;
+
         }
+        if(showBoom && (time > boomEndTime))
+            showBoom = false;
         if (ratY > 540)
             lost = true;
         if(time > 60)
             t.stop();
+
+
 
     }
 
