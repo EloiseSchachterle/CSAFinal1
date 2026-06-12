@@ -20,7 +20,9 @@ public class DisplayPanel extends JPanel implements MouseListener, KeyListener, 
     private BufferedImage pizza;
     private BufferedImage slice;
     private BufferedImage rat;
-    private BufferedImage basil;
+    private BufferedImage basil1;
+    private BufferedImage olive1;
+    private BufferedImage mushroom1;
     private BufferedImage won;
     private BufferedImage lostPhoto;
     private BufferedImage boom;
@@ -32,8 +34,11 @@ public class DisplayPanel extends JPanel implements MouseListener, KeyListener, 
     private int boomX;
     private int boomY;
     private double boomEndTime;
-    private ArrayList<BufferedImage> pepperoni;
-
+    private BufferedImage pepperoniImage;
+    private ArrayList<Pepperoni> pepperonis = new ArrayList<>();
+    private ArrayList<Olive> olives = new ArrayList<>();
+    private ArrayList<Basil> basils = new ArrayList<>();
+    private ArrayList<Mushroom> mushrooms = new ArrayList<>();
 
 
 
@@ -63,7 +68,7 @@ public class DisplayPanel extends JPanel implements MouseListener, KeyListener, 
         }
 
         try {
-            background = ImageIO.read(new File("src/PizzaBox.jpg"));
+            background = ImageIO.read(new File("src/new.jpeg"));
         } catch (IOException e) {
             System.out.println(e.getMessage());
         }
@@ -83,15 +88,36 @@ public class DisplayPanel extends JPanel implements MouseListener, KeyListener, 
             System.out.println(e.getMessage());
         }
         try {
-            basil = ImageIO.read(new File("src/Basil.png"));
+            basil1 = ImageIO.read(new File("src/Basil2.png"));
         } catch (IOException e) {
             System.out.println(e.getMessage());
         }
+
+        try {
+            olive1 = ImageIO.read(new File("src/Olive1.png"));
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+        }
+
+        try {
+            mushroom1 = ImageIO.read(new File("src/mushroom.png"));
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+        }
+
+        try {
+            pepperoniImage = ImageIO.read(new File("src/Pepperoni2.png"));
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+        }
+
+
         addMouseListener(this);
         addKeyListener(this);
         setFocusable(true);
         requestFocusInWindow();
         t.start();
+
     }
 
     @Override
@@ -100,8 +126,23 @@ public class DisplayPanel extends JPanel implements MouseListener, KeyListener, 
         if(time <= 60) {
             g.drawImage(background, 0, 0, null);
             g.drawImage(slice, sliceX, sliceY, null);
-            g.drawImage(pizza, 150, 200, null);
+            g.drawImage(pizza, 125, 125, null);
             g.drawImage(rat, ratX, ratY, null);
+            for(Pepperoni p : pepperonis){
+                g.drawImage(pepperoniImage, p.getX(), p.getY(), null);
+            }
+
+            for(Basil p : basils){
+                g.drawImage(basil1, p.getX(), p.getY(), null);
+            }
+
+            for(Olive p : olives){
+                g.drawImage(olive1, p.getX(), p.getY(), null);
+            }
+
+            for(Mushroom p : mushrooms){
+                g.drawImage(mushroom1, p.getX(), p.getY(), null);
+            }
         }
         else{
             g.drawImage(won, 0,0, null);
@@ -113,7 +154,7 @@ public class DisplayPanel extends JPanel implements MouseListener, KeyListener, 
         g.setColor(Color.BLACK);
 
         g.drawString("Time: " + ((int) (time)), 10, 30);
-        if(time < 6){
+        if(time < 60){
             g.drawString("DONT LET ANY RATS STEAL YOUR PIZZA! " , 100, 30);
         }
         if(time > 60){
@@ -130,6 +171,8 @@ public class DisplayPanel extends JPanel implements MouseListener, KeyListener, 
         }
         if(showBoom && !lost && time <= 60)
             g.drawImage(boom, boomX, boomY, null);
+
+
 
 
     }
@@ -236,10 +279,50 @@ public class DisplayPanel extends JPanel implements MouseListener, KeyListener, 
             lost = true;
         if(time > 60)
             t.stop();
+        if(Math.random() < 0.02){
+            pepperonis.add(new Pepperoni((int)(Math.random()*500), -30, (int)(Math.random() *3)+2));
+        }
 
+        for(int i = pepperonis.size()-1; i >= 0; i--){
+            pepperonis.get(i).move();
+            if(pepperonis.get(i).getY() > 540){
+                pepperonis.remove(i);
+            }
+        }
 
+        if(Math.random() < 0.02){
+            basils.add(new Basil((int)(Math.random()*500), -30, (int)(Math.random() *3)+2));
+        }
+
+        for(int i = basils.size()-1; i >= 0; i--){
+            basils.get(i).move();
+            if(basils.get(i).getY() > 540){
+                basils.remove(i);
+            }
+        }
+
+        if(Math.random() < 0.02){
+            olives.add(new Olive((int)(Math.random()*500), -30, (int)(Math.random() *3)+2));
+        }
+
+        for(int i = olives.size()-1; i >= 0; i--){
+            olives.get(i).move();
+            if(olives.get(i).getY() > 540){
+                olives.remove(i);
+            }
+        }
+
+        if(Math.random() < 0.02){
+            mushrooms.add(new Mushroom((int)(Math.random()*500), -30, (int)(Math.random() *3)+2));
+        }
+
+        for(int i = mushrooms.size()-1; i >= 0; i--){
+            mushrooms.get(i).move();
+            if(mushrooms.get(i).getY() > 540){
+                mushrooms.remove(i);
+            }
+        }
 
     }
 
 }
-
