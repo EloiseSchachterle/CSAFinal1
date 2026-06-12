@@ -6,15 +6,16 @@ import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.awt.MouseInfo;
-import java.awt.Point;
+import java.util.ArrayList;
+import java.util.List;
+
 
 public class DisplayPanel extends JPanel implements MouseListener, KeyListener, ActionListener {
-    private double time;
-    private int sliceX;
-    private int sliceY;
-    private int ratX;
-    private int ratY;
+    private double time = 0;
+    private int sliceX = 230;
+    private int sliceY = 435;
+    private int ratX = 235;
+    private int ratY = 0;
     private BufferedImage background;
     private BufferedImage pizza;
     private BufferedImage slice;
@@ -24,27 +25,19 @@ public class DisplayPanel extends JPanel implements MouseListener, KeyListener, 
     private BufferedImage lostPhoto;
     private BufferedImage boom;
     private BufferedImage reset;
-    private Timer t;
-    private int speed;
-    private boolean lost;
+    private Timer t = new Timer(10, this);
+    private int speed = 2;
+    private boolean lost = false;
     private boolean showBoom;
     private int boomX;
     private int boomY;
     private double boomEndTime;
+    private ArrayList<BufferedImage> pepperoni;
 
 
 
 
     public DisplayPanel() {
-        lost = false;
-        time = 0;
-        sliceX = 230;
-        sliceY = 435;
-        ratX=235;
-        ratY=0;
-        speed = 2;
-        t = new Timer(10, this);
-
         try {
             won = ImageIO.read(new File("src/FinalPizzaWon.png"));
         } catch (IOException e) {
@@ -125,7 +118,7 @@ public class DisplayPanel extends JPanel implements MouseListener, KeyListener, 
         }
         if(time > 60){
             g.setFont(new Font("Arial", Font.BOLD, 50));
-            g.drawString("YOU WIN!!! " , 125, 250);
+            g.drawString("YOU WIN!!! " , 75, 400);
 
         }
         if(lost){
@@ -249,3 +242,4 @@ public class DisplayPanel extends JPanel implements MouseListener, KeyListener, 
     }
 
 }
+
